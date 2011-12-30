@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="TestXlsXToHtmlAndroidActivity" default="-dex">
+
+
+    <property file="local.properties" />
+
+    <property file="ant.properties" />
+
+    <loadproperties srcFile="project.properties" />
+
+    <fail
+            message="sdk.dir is missing. Make sure to generate local.properties using 'android update project' or to inject it through an env var"
+            unless="sdk.dir"
+    />
+
+    <import file="${sdk.dir}\tools\ant\build.xml" />
+	<macrodef name="dex-helper-mod">
+	    	<attribute name="input-dir" />
+	    	<attribute name="output-dex-file" />
+	    	<element name="external-libs" optional="yes" />
+	        <element name="extra-parameters" optional="yes" />
+	    	<sequential>
+	            <!-- set the secondary dx input: the project (and library) jar files
+	                 If a pre-dex task sets it to something else this has no effect -->
+	            <if>
+	                <condition>
+	                    <isreference refid="out.dex.jar.input.ref" />
+	                </condition>
+	                <else>
+	                    <path id="out.dex.jar.input.ref">
+	                        <path refid="jar.libs.ref" />
+	                    </path>
+	                </else>
+	            </if>
+
+	            <echo>Converting compiled files and external libraries into @{output-dex-file}...</echo>
+	            <apply executable="${dx}" failonerror="true" parallel="true">
+	            	<arg value="--dex" />
+	                <arg value="--output=@{output-dex-file}" />
+	            	<arg value="--core-library" />
+	                <extra-parameters />
+	                <arg path="@{input-dir}" />
+	                <path refid="out.dex.jar.input.ref" />
+	                <external-libs />
+	            </apply>
+	        </sequential>
+	    </macrodef>
+		
+		<!-- This is a modified version of "-dex" target taken from $SDK/tools/ant/main_rules.xml -->
+	    <!-- Converts this project's .class files into .dex files -->
+	    <target name="-dex" depends="-compile"
+	            unless="do.not.compile">
+	        <if condition="${manifest.hasCode}">
+	            <then>
+	            	<!-- 1 - Create temporary directory and run DX for the first ADDITIONAL DEX file -->
+		            	<mkdir dir="${out.absolute.dir}/onary_dex_dir" />
+		            	<dex-helper-mod input-dir="${basedir}/libsToSpecialDEX/1"
+		            		output-dex-file="${out.absolute.dir}/onary_dex_dir/classes.dex" />
+		            	
+		            	<!-- Jar the first dex file so it can be consumed by the DexClassLoader. -->
+		            	<!-- Package the output in the assets directory of the apk. -->
+		            	<jar destfile="${asset.absolute.dir}/onary_dex.jar"
+		            	     basedir="${out.absolute.dir}/onary_dex_dir" includes="classes.dex" />  
+	            	
+	            	<!-- 2 - Create temporary directory and run DX for the second ADDITIONAL DEX file -->
+		            	<mkdir dir="${out.absolute.dir}/secondary_dex_dir" />
+		            	<dex-helper-mod input-dir="${basedir}/libsToSpecialDEX/2"
+		            		output-dex-file="${out.absolute.dir}/secondary_dex_dir/classes.dex" />
+		            	
+		            	<!-- Jar the second dex file so it can be consumed by the DexClassLoader. -->
+		            	<!-- Package the output in the assets directory of the apk. -->
+		            	<jar destfile="${asset.absolute.dir}/secondary_dex.jar"
+		            	     basedir="${out.absolute.dir}/secondary_dex_dir" includes="classes.dex" />  
+	            	
+	            	<!-- 3 - Create temporary directory and run DX for the third ADDITIONAL DEX file -->
+		            	<mkdir dir="${out.absolute.dir}/tertiary_dex_dir" />
+		            	<dex-helper-mod input-dir="${basedir}/libsToSpecialDEX/3"
+		            		output-dex-file="${out.absolute.dir}/tertiary_dex_dir/classes.dex" />
+		            	
+		            	<!-- Jar the secondary dex file so it can be consumed by the DexClassLoader. -->
+		            	<!-- Package the output in the assets directory of the apk. -->
+		            	<jar destfile="${asset.absolute.dir}/tertiary_dex.jar"
+		            	     basedir="${out.absolute.dir}/tertiary_dex_dir" includes="classes.dex" />
+	            	
+	            	<!-- 4 - Create temporary directory and run DX for the third ADDITIONAL DEX file -->
+		            	<mkdir dir="${out.absolute.dir}/fourtiary_dex_dir" />
+		            	<dex-helper-mod input-dir="${basedir}/libsToSpecialDEX/4"
+		            		output-dex-file="${out.absolute.dir}/fourtiary_dex_dir/classes.dex" />
+		            	
+		            	<!-- Jar the secondary dex file so it can be consumed by the DexClassLoader. -->
+		            	<!-- Package the output in the assets directory of the apk. -->
+		            	<jar destfile="${asset.absolute.dir}/fourtiary_dex.jar"
+		            	     basedir="${out.absolute.dir}/fourtiary_dex_dir" includes="classes.dex" /> 
+	            	<!-- 5- Create temporary directory and run DX for the third ADDITIONAL DEX file -->
+		            	<mkdir dir="${out.absolute.dir}/fifthary_dex_dir" />
+		            	<dex-helper-mod input-dir="${basedir}/libsToSpecialDEX/5"
+		            		output-dex-file="${out.absolute.dir}/fifthary_dex_dir/classes.dex" />
+		            	
+		            	<!-- Jar the secondary dex file so it can be consumed by the DexClassLoader. -->
+		            	<!-- Package the output in the assets directory of the apk. -->
+		            	<jar destfile="${asset.absolute.dir}/fifthary_dex.jar"
+		            	     basedir="${out.absolute.dir}/fifthary_dex_dir" includes="classes.dex" /> 
+	            	<!-- 6- Create temporary directory and run DX for the third ADDITIONAL DEX file -->
+		            	<mkdir dir="${out.absolute.dir}/sixthary_dex_dir" />
+		            	<dex-helper-mod input-dir="${basedir}/libsToSpecialDEX/6"
+		            		output-dex-file="${out.absolute.dir}/sixthary_dex_dir/classes.dex" />
+		            	
+		            	<!-- Jar the secondary dex file so it can be consumed by the DexClassLoader. -->
+		            	<!-- Package the output in the assets directory of the apk. -->
+		            	<jar destfile="${asset.absolute.dir}/sixthary_dex.jar"
+		            	     basedir="${out.absolute.dir}/sixthary_dex_dir" includes="classes.dex" /> 
+	            	<!-- 7- Create temporary directory and run DX for the third ADDITIONAL DEX file -->
+		            	<mkdir dir="${out.absolute.dir}/sevenary_dex_dir" />
+		            	<dex-helper-mod input-dir="${basedir}/libsToSpecialDEX/7"
+		            		output-dex-file="${out.absolute.dir}/sevenary_dex_dir/classes.dex" />
+		            	
+		            	<!-- Jar the secondary dex file so it can be consumed by the DexClassLoader. -->
+		            	<!-- Package the output in the assets directory of the apk. -->
+		            	<jar destfile="${asset.absolute.dir}/sevenary_dex.jar"
+		            	     basedir="${out.absolute.dir}/sevenary_dex_dir" includes="classes.dex" /> 
+	            	
+	            	<!-- 8- Create temporary directory and run DX for the third ADDITIONAL DEX file -->
+		            	<mkdir dir="${out.absolute.dir}/eightary_dex_dir" />
+		            	<dex-helper-mod input-dir="${basedir}/libsToSpecialDEX/8"
+		            		output-dex-file="${out.absolute.dir}/eightary_dex_dir/classes.dex" />
+		            	
+		            	<!-- Jar the secondary dex file so it can be consumed by the DexClassLoader. -->
+		            	<!-- Package the output in the assets directory of the apk. -->
+		            	<jar destfile="${asset.absolute.dir}/eightary_dex.jar"
+		            	     basedir="${out.absolute.dir}/eightary_dex_dir" includes="classes.dex" /> 
+	            	<!-- 9- Create temporary directory and run DX for the third ADDITIONAL DEX file -->
+		            	<mkdir dir="${out.absolute.dir}/nineary_dex_dir" />
+		            	<dex-helper-mod input-dir="${basedir}/libsToSpecialDEX/9"
+		            		output-dex-file="${out.absolute.dir}/nineary_dex_dir/classes.dex" />
+		            	
+		            	<!-- Jar the secondary dex file so it can be consumed by the DexClassLoader. -->
+		            	<!-- Package the output in the assets directory of the apk. -->
+		            	<jar destfile="${asset.absolute.dir}/nineary_dex.jar"
+		            	     basedir="${out.absolute.dir}/nineary_dex_dir" includes="classes.dex" /> 
+	            	
+	            	
+	            	
+	            </then>
+	            <else>
+	                <echo>hasCode = false. Skipping...</echo>
+	            </else>
+	        </if>
+	    </target>
+		
+</project>
